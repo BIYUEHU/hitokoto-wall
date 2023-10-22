@@ -1,3 +1,59 @@
+<script setup lang="ts">
+import { computed, ref, getCurrentInstance, ComponentInternalInstance } from 'vue';
+import { getHitokotoDefault, likeHitokoto } from '../http';
+import store from '../store';
+import { hitokotoData, hitokotoDefault, getHitokotoId, spawnHitokotoId } from '../func';
+import mdui from 'mdui';
+
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const Store = store();
+const hitokotoRes = ref<null | hitokotoData<hitokotoDefault>>(null);
+
+const hitokotoHandle = computed(() => {
+	if (!hitokotoRes.value) return '';
+	const data = hitokotoRes.value.data;
+	data.from = data.from?.trim();
+	return `${data.msg}${data.from ? ` ——${data.from}` : ''}`;
+});
+
+const isLike = computed(() => {
+	if (!hitokotoRes.value) return false;
+	return Store.likes.includes(hitokotoRes.value.data.id);
+});
+
+const getHitokoto = async (id?: number) => {
+	hitokotoRes.value = await getHitokotoDefault(id);
+};
+
+const likeThisHitokoto = async () => {
+	if (isLike.value) {
+		mdui.snackbar(/* html */ `<span style="color: deepskyblue">已赞过该语录</span>`);
+		return;
+	}
+	if (!hitokotoRes.value) return;
+	const id = hitokotoRes.value.data.id;
+	await likeHitokoto(id);
+	Store.newLike(id);
+	mdui.snackbar(/* html */ `<span style="color: pink">点赞成功</span>`);
+	hitokotoRes.value.data.likes += 1;
+};
+
+const shareHitokoto = () => {
+	if (!hitokotoRes.value || typeof proxy !== 'object' || !('$copyText' in (proxy as object))) return;
+	const content = `${window.location.href.split('?')[0]}?id=${spawnHitokotoId(hitokotoRes.value.data.id)}`;
+	(proxy as any).$copyText(content).then(
+		() => {
+			mdui.snackbar(/* html */ `<span style="color: lightgreen">复制成功 ${content}</span>`);
+		},
+		() => {
+			mdui.snackbar(/* html */ `<span style="color: red">复制失败</span>`);
+		},
+	)(proxy, content);
+};
+
+getHitokoto(getHitokotoId() ?? undefined);
+</script>
+
 <template>
 	<div>
 		<div style="padding-top: 20vh">
@@ -23,11 +79,22 @@
 						</strong>
 					</small>
 					<br />
-					<button class="mdui-btn mdui-btn-raised mdui-ripple">
+					<button class="mdui-btn mdui-btn-raised mdui-ripple" @click="likeThisHitokoto">
 						<i class="mdui-icon material-icons">{{ isLike ? 'favorite' : 'favorite_border' }}</i>
 					</button>
-					<button style="margin-left: 10px" class="mdui-btn mdui-btn-raised mdui-ripple" @click="getHitokoto">
+					<button
+						style="margin-left: 10px"
+						class="mdui-btn mdui-btn-raised mdui-ripple"
+						@click="getHitokoto()"
+					>
 						<i class="mdui-icon material-icons">skip_next</i>
+					</button>
+					<button
+						style="margin-left: 10px"
+						class="mdui-btn mdui-btn-raised mdui-ripple"
+						@click="shareHitokoto"
+					>
+						<i class="mdui-icon material-icons">share</i>
 					</button>
 				</div>
 				<div class="mdui-row mdmdui-textfield-invalidui-row-gapless mdui-m-t-5">
@@ -59,26 +126,3 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { computed, ref } from 'vue';
-import { getHitokotoDefault } from '../http';
-import { hitokotoData, hitokotoDefault } from '../func';
-
-const hitokotoRes = ref<null | hitokotoData<hitokotoDefault>>(null);
-
-const hitokotoHandle = computed(() => {
-	if (!hitokotoRes.value) return '';
-	const data = hitokotoRes.value.data;
-	data.from = data.from?.trim();
-	return `${data.msg}${data.from ? ` ——${data.from}` : ''}`;
-});
-
-const isLike = false;
-
-const getHitokoto = async () => {
-	hitokotoRes.value = await getHitokotoDefault();
-};
-
-getHitokoto();
-</script>

@@ -1,34 +1,15 @@
-# animewall
+# hitokoto-wall
 
-<div align="center">
-    <img src="https://img.shields.io/github/license/biyuehu/animewall">
-    <img src="https://img.shields.io/github/last-commit/biyuehu/animewall">
-    <img src="https://img.shields.io/github/commit-activity/t/biyuehu/animewall">
-    <img src="https://img.shields.io/github/commit-activity/t/biyuehu/animewall">
+<div align="center">    
+    <img src="https://img.shields.io/github/license/biyuehu/hitokoto-wall">
+    <img src="https://img.shields.io/github/last-commit/biyuehu/hitokoto-wall">
+    <img src="https://img.shields.io/github/commit-activity/t/biyuehu/hitokoto-wall">
     <br>
-    ⚡番组计划收藏动画&Galgame展示网页，基于<mark>Vue</mark>+<mark>TypeScript</mark>+<mark>Vite</mark>开发⚡
+    ⚡个人语录墙⚡
+    <br>
+    <img style="max-width: 800px" src="https://pic.imgdb.cn/item/6534d96bc458853aefb8beef.png" alt="show image">
 </div>
 
-## Install
+## API Reference
 
-```bash
-git clone https://github.com/BIYUEHU/animewall.git
-```
-
-打开`src/config.ts`文件
-
-```typescript
-export default {
-	userName: 'himeno',
-};
-```
-
-将`userName`更改为你的番组计划用户名或用户ID
-
-> [Bangumi](https://bgm.tv/)
-
-编译
-
-```bash
-npm run build
-```
+> [HitokotoV2](https://github.com/BIYUEHU/ial-apis/tree/master/hitokoto/v2)

@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { getTotalCall } from '../http';
+import { ref } from 'vue';
+
+const totalCall = ref(0);
+(async () => {
+	totalCall.value = await getTotalCall();
+})();
+</script>
 
 <template>
 	<div class="footer mdui-typo-caption mdui-p-b-2 mdui-text-color-white-secondary mdui-text-center">
@@ -7,6 +15,6 @@
 			>Hotaru</a
 		>
 		<br />
-		<a href="https://hotaru.icu" target="_blank">HotaruBlog</a> | Api Calls {{ 1 }} times
+		<a href="https://hotaru.icu" target="_blank">HotaruBlog</a> | Api Calls {{ totalCall }} times
 	</div>
 </template>
